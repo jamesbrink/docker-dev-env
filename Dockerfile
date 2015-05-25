@@ -25,6 +25,7 @@ RUN apt-get update && apt-get install -y \
   libyaml-dev \
   maven \
   openjdk-7-jdk \
+  openssh-server \
   python-software-properties \
   ruby \
   silversearcher-ag \

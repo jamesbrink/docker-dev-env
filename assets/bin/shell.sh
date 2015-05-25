@@ -12,4 +12,5 @@ if [ -a /runSetup ]; then
   su -c /local/opt/docker-assets/bin/setup-git.sh james
 fi
 
+/usr/sbin/sshd -D
 su - $USER_NAME
