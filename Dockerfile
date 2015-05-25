@@ -100,8 +100,11 @@ RUN chmod -R 775 /local/opt/docker-assets && touch /runSetup
 # Setup environment variables
 ENV FULL_NAME James Brink
 ENV USER_NAME james
+ENV USER_PASSWORD password
 ENV EMAIL_ADDRESS brink.james@gmail.com
 ENV RUBY_VERSION v2_2_2
 ENV PYTHON_VERSION 2.7
+
+EXPOSE 22
 
 CMD ["/local/opt/docker-assets/bin/shell.sh"]
