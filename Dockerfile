@@ -82,7 +82,7 @@ RUN cd /home/_docker_staging/local/src/cpython \
   && ./configure --prefix=/home/_docker_staging/local/python/v$PYTHON_VERSION \
   && make \
   && export OLD_PATH=$PATH \
-  && export PATH=/home/_docker_staging/local/src/cpython \
+  && export PATH=/home/_docker_staging/local/src/cpython:$PATH \
   # TODO make test is failing on test_gdb
   # && make test \
   && make install \
