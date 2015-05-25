@@ -68,20 +68,18 @@ RUN mkdir -p /home/_docker_staging/local/src/ \
   && cd /home/_docker_staging/projects/ \
   && git clone https://github.com/jamesbrink/dotfiles.git 
 
-# Compile and install from sources
-RUN echo \
-  # Install Ruby
-  && cd /home/_docker_staging/local/src/ruby \
+# Install Ruby
+RUN cd /home/_docker_staging/local/src/ruby \
   && git checkout $RUBY_VERSION \
   && autoconf \
   && ./configure --prefix /home/_docker_staging/local/ruby/`echo "${RUBY_VERSION}" | sed "s/_/\./"` \
   && make && make test && make install \
-  && make clean \
-  && echo "Install Python ${PYTHON_VERSION} ." \
-  # Install Python
-  && cd /home/_docker_staging/local/src/cpython \
+  && make clean 
+
+# Install Python
+RUN cd /home/_docker_staging/local/src/cpython \
   && git checkout $PYTHON_VERSION \
-  && ./confure --prefix=/home/_docker_staging/local/python/v$PYTHON_VERSION \
+  && ./configure --prefix=/home/_docker_staging/local/python/v$PYTHON_VERSION \
   && make \
   && export OLD_PATH=$PATH \
   && export PATH=/home/_docker_staging/local/src/cpython \
