@@ -90,12 +90,19 @@ RUN cd /home/_docker_staging/local/src/cpython \
   && export PATH=$OLD_PATH \
   && make clean
 
+# Install IntelliJ 14 Ultimate
+RUN cd /home/_docker_staging/ \
+  && wget "http://download.jetbrains.com/idea/ideaIU-14.1.4.tar.gz" \
+  && tar xfvz ideaIU-14.1.4.tar.gz \
+  && rm ideaIU-14.1.4.tar.gz \
+  && mv idea-IU-141.1532.4 /home/_docker_staging/local/opt/IntelliJ14 
+
 USER root
 RUN userdel docker
 
 # Copy any docker assets into container
-COPY ./assets /local/opt/docker-assets/
-RUN chmod -R 775 /local/opt/docker-assets && touch /runSetup
+COPY ./assets /usr/local/opt/docker-assets/
+RUN chmod -R 775 /usr/local/opt/docker-assets && touch /runSetup
 
 # Setup environment variables
 ENV FULL_NAME James Brink
@@ -107,4 +114,4 @@ ENV PYTHON_VERSION 2.7
 
 EXPOSE 22
 
-CMD ["/local/opt/docker-assets/bin/shell.sh"]
+CMD ["/usr/local/opt/docker-assets/bin/shell.sh"]
