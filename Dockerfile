@@ -1,8 +1,8 @@
 # James Brink Dev
 #
-# VERSION      1.0.0
+# VERSION      1.0.1
 
-FROM ubuntu:vivid
+FROM ubuntu:wily
 MAINTAINER James Brink, brink.james@gmail.com
 
 # Setup needed dependencies
@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y \
   build-essential \ 
   cmake \ 
   curl \
+  elixir \
+  file \
   gdb \
   git \
   libcurl4-openssl-dev \
@@ -24,7 +26,7 @@ RUN apt-get update && apt-get install -y \
   libxslt1-dev \
   libyaml-dev \
   maven \
-  openjdk-7-jdk \
+  openjdk-8-jdk \
   openssh-server \
   python-software-properties \
   ruby \
@@ -36,24 +38,10 @@ RUN apt-get update && apt-get install -y \
   vim \
   wget \
   zlib1g-dev \
-  && wget http://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb \
-  && dpkg -i erlang-solutions_1.0_all.deb \
-  && apt-get update \
-  && apt-get -y install elixir \
   && rm -rf /var/lib/apt/lists/* 
 
 RUN useradd -g users -s /bin/bash -d /home/_docker_staging -m docker
 USER docker
-
-# Download JDK
-RUN mkdir -p /home/_docker_staging/local/opt/java \
-  && cd /home/_docker_staging/local/opt/java \
-  &&  wget --no-cookies --no-check-certificate --header \
-    "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" \
-    "http://download.oracle.com/otn-pub/java/jdk/8u45-b14/jdk-8u45-linux-x64.tar.gz" \
-  && tar xfvz jdk-8u45-linux-x64.tar.gz \
-  && mv jdk1.8.0_45 jdk8 \
-  && rm jdk-8u45-linux-x64.tar.gz  
 
 # Clone Repos 
 RUN mkdir -p /home/_docker_staging/local/src/ \
@@ -61,6 +49,8 @@ RUN mkdir -p /home/_docker_staging/local/src/ \
   && git clone https://github.com/ruby/ruby.git \
   && git clone https://github.com/python/cpython.git \
   && git clone https://github.com/joyent/node.git \
+  && git clone https://github.com/rust-lang/rust.git \
+  && git clone https://github.com/rust-lang/cargo.git \
   && cd /home/_docker_staging/local/src/ \
   && git clone https://github.com/golang/go.git \
   && git clone https://github.com/jruby/jruby.git \
@@ -90,12 +80,22 @@ RUN cd /home/_docker_staging/local/src/cpython \
   && export PATH=$OLD_PATH \
   && make clean
 
-# Install IntelliJ 14 Ultimate
+# Install IntelliJ 15 Ultimate
 RUN cd /home/_docker_staging/ \
-  && wget "http://download.jetbrains.com/idea/ideaIU-14.1.4.tar.gz" \
-  && tar xfvz ideaIU-14.1.4.tar.gz \
-  && rm ideaIU-14.1.4.tar.gz \
-  && mv idea-IU-141.1532.4 /home/_docker_staging/local/opt/IntelliJ14 
+  && mkdir -p /home/_docker_staging/local/opt/ \
+  && wget "https://download.jetbrains.com/idea/ideaIU-15.0.2.tar.gz" \
+  && tar xfvz ideaIU-15.0.2.tar.gz \
+  && rm ideaIU-15.0.2.tar.gz \
+  && mv idea-IU-143.1184.17 /home/_docker_staging/local/opt/IntelliJ15
+
+# Install Rust
+RUN cd /home/_docker_staging/local/ \
+  && wget https://static.rust-lang.org/dist/rust-1.5.0-x86_64-unknown-linux-gnu.tar.gz \
+  && tar xfvz rust-1.5.0-x86_64-unknown-linux-gnu.tar.gz \
+  && cd rust-1.5.0-x86_64-unknown-linux-gnu \
+  && ./install.sh --prefix=/home/_docker_staging/local \
+  && cd /home/_docker_staging/local/ \
+  && rm -rf rust-1.5.0-x86_64-unknown-linux-gnu
 
 USER root
 RUN userdel docker
@@ -111,6 +111,7 @@ ENV USER_PASSWORD password
 ENV EMAIL_ADDRESS brink.james@gmail.com
 ENV RUBY_VERSION v2_2_2
 ENV PYTHON_VERSION 2.7
+ENV RUST_VERSION 1.5.0
 
 EXPOSE 22
 

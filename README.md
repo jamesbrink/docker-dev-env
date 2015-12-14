@@ -1,2 +1,2 @@
 # docker-dev-env
-My person Dev environment inside a docker container.
+My personal Dev environment inside a docker container. This container is not optimized for space at all.
